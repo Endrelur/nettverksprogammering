@@ -38,7 +38,7 @@ public class KlientTråd extends Thread {
                 final int PLUSS = 1;
                 final int MINUS = 2;
                 final int AVSLUTT = 9;
-                System.out.println("Thread" + this.getId() + "viser hovedmeny");
+                System.out.println("THREAD" + this.getId() + ": Viser hovedmeny");
                 this.klientSkriver.println(" ");
                 this.klientSkriver.println("Pluss og Minus tjener Meny:");
                 this.klientSkriver.println(" ");
@@ -62,7 +62,7 @@ public class KlientTråd extends Thread {
                         break;
                 }
             } catch (Exception e) {
-                System.out.println("THREAD:" + this.getId() + ":" + e.toString());
+                System.out.println("THREAD" + this.getId() + ":" + e.toString());
             }
         }
     }
@@ -77,7 +77,7 @@ public class KlientTråd extends Thread {
         this.klientSkriver.close();
         this.klientLeser.close();
         this.socket.close();
-        System.out.println("THREAD:" + this.getId() + "Avsluttet.");
+        System.out.println("THREAD" + this.getId() + ": Avsluttet.");
     }
 
     /**
@@ -86,7 +86,7 @@ public class KlientTråd extends Thread {
      * @throws Exception
      */
     private void minus() throws Exception {
-        System.out.println("THREAD:" + this.getId() + ": Klienten har valgt minus");
+        System.out.println("THREAD" + this.getId() + ": Klienten har valgt minus");
         this.klientSkriver.println(" ");
         this.klientSkriver.println("Minus:");
         this.klientSkriver.println("Skriv inn ett tall...");
@@ -103,7 +103,7 @@ public class KlientTråd extends Thread {
      * @throws Exception
      */
     private void pluss() throws Exception {
-        System.out.println("THREAD:" + this.getId() + ": Klienten har valgt pluss");
+        System.out.println("THREAD" + this.getId() + ": Klienten har valgt pluss");
         this.klientSkriver.println(" ");
         this.klientSkriver.println("Pluss:");
         this.klientSkriver.println("Skriv inn ett tall...");
@@ -122,14 +122,14 @@ public class KlientTråd extends Thread {
      * @throws Exception
      */
     private int mottaInt() throws Exception {
-        System.out.println("THREAD:" + this.getId() + "THREAD:" + this.getId() + ": Avventer int-input");
+        System.out.println("THREAD" + this.getId() + ": Avventer int-input");
         this.klientSkriver.println("");
         String linje = this.klientLeser.readLine();
         while (!Pattern.compile("[0-9]").matcher(linje).find()) {
             linje = this.klientLeser.readLine();
             this.klientSkriver.println("Vennligst skriv inn ett tall.");
         }
-        System.out.println("THREAD:" + this.getId() + ": Fikk: " + linje + " som input.");
+        System.out.println("THREAD" + this.getId() + ": Fikk: " + linje + " som input.");
         return Integer.parseInt(linje);
     }
 }
