@@ -5,8 +5,8 @@ import java.io.IOException;
 import java.util.LinkedHashMap;
 
 /**
- * Data-structure for parsing and storing the http-request.
- * NB! Incomplete.
+ * Data-structure for parsing and holding a http-request.
+ * The body is omitted.
  */
 public class HttpRequest {
 

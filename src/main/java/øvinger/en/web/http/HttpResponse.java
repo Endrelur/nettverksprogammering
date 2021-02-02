@@ -4,6 +4,9 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.charset.StandardCharsets;
 
+/**
+ * Data-structure for building and writing http-responses
+ */
 public class HttpResponse {
 
     private String statusLine;
@@ -14,6 +17,7 @@ public class HttpResponse {
         HEADER_BUILDER = new StringBuilder();
     }
 
+
     public void setStatusLine(String statusLine) {
         this.statusLine = (statusLine + "\r\n");
     }
@@ -21,6 +25,7 @@ public class HttpResponse {
     public void setPayLoad(byte[] payLoad) {
         this.payload = payLoad;
     }
+
     public void addHeader(String fieldName, String fieldValue) {
         HEADER_BUILDER.append(fieldName.trim())
                       .append(":")

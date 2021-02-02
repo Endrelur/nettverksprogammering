@@ -1,12 +1,12 @@
 package øvinger.en.web.http;
 
+import øvinger.en.web.html.HtmlBuilder;
 import øvinger.en.web.http.error.ClientError;
 import øvinger.en.web.http.error.ServerError;
 
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.nio.charset.StandardCharsets;
 import java.util.LinkedHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -34,9 +34,13 @@ public class HttpHeaderServer {
     }
 
     private void listen() {
+        LOGGER.log(Level.INFO, "Listening on " + serverSocket.getLocalPort());
+
         while (serverSocket.isBound()) {
             try {
                 Socket connection = serverSocket.accept();
+                LOGGER.log(Level.INFO, "Accepted connection from " + connection.getInetAddress());
+
                 handleConnection(connection);
             }
             catch (IOException e) { // fixme
@@ -46,6 +50,9 @@ public class HttpHeaderServer {
         closeQuietly(serverSocket);
     }
 
+    /**
+     * Handles the communication-connection between the server/client
+     */
     private void handleConnection(Socket connection) {
         BufferedReader reader = null;
         OutputStream out = null;
@@ -71,11 +78,18 @@ public class HttpHeaderServer {
             closeQuietly(reader);
             closeQuietly(out);
             closeQuietly(connection);
+            LOGGER.log(Level.INFO, "Closed connection with " + connection.getInetAddress());
         }
     }
 
+    /**
+     * Handles the given request and returns an appropriate response.
+     *
+     * @throws ServerError if the request method is not implemented
+     * @throws ClientError if the requested resource does not exist
+     */
     private HttpResponse handleRequest(HttpRequest request) {
-        if (!request.getMethodToken().equals("GET")) {              //
+        if (!request.getMethodToken().equals("GET")) {
             throw new ServerError("501 Not Implemented", null);
         }
 
@@ -93,31 +107,28 @@ public class HttpHeaderServer {
         return response;
     }
 
+    /**
+     * Builds a default page to serve, in accordance with the assignment
+     */
     private byte[] generateResource(HttpRequest request) {
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> headers = request.getHeaderTable();
 
-        builder.append("<ul>\n");
+        HtmlBuilder htmlBuilder = new HtmlBuilder("Øving 1");
+
+        htmlBuilder.append("<h1>Velkommen, sjekk ut de header-fieldsa a!</h1>");
+        htmlBuilder.append("<ul>");
         headers.forEach((name, value) ->
                 builder.append("\t<li>").append(name).append(": ").append(value).append("</li>\n")
         );
-        builder.append("</ul>\n");
+        htmlBuilder.append(builder.toString());
+        htmlBuilder.append("</ul>");
 
-        String htmlResource =
-                "<!DOCTYPE html>"                                                   + "\n" +
-                "<html lang=\"en\" dir=\"ltr\">"                                    + "\n" +
-                    "<head>"                                                        + "\n" +
-                        "<meta charset=\"utf-8\">"                                  + "\n" +
-                        "<title>Øving 1</title>"                                    + "\n" +
-                    "</head>"                                                       + "\n" +
-                    "<body>"                                                        + "\n" +
-                        "<h1>Lorem ipsum dolor sit amet!</h1>"                      + "\n" +
-                        builder.toString()                                          + "\n" +
-                    "</body>"                                                       + "\n" +
-                "</html>"                                                               ;
-
-        return htmlResource.getBytes(StandardCharsets.UTF_8);
+        return htmlBuilder.complete();
     }
+
+
+    // Convenience methods --------------------------------------------------------------------------------------------
 
     private void logAndExit(String message) {
         LOGGER.log(Level.SEVERE, message);
