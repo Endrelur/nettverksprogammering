@@ -1,54 +1,27 @@
 package øvinger.en.tjener;
 
 import java.io.BufferedReader;
-import java.io.InputStreamReader;
 import java.io.PrintWriter;
-import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.regex.Pattern;
 
-public class Tjener {
-    private ServerSocket tjener;
-    private Socket forbindelse;
+public class KlientTråd extends Thread {
+    private Socket socket;
     private BufferedReader klientLeser;
     private PrintWriter klientSkriver;
-    private boolean kjører;
 
-    public Tjener(int port) throws Exception {
+    public KlientTråd(Socket socket, BufferedReader klientLeser, PrintWriter klientSkriver) {
+        this.socket = socket;
+        this.klientLeser = klientLeser;
+        this.klientSkriver = klientSkriver;
+    }
+
+    public void run() {
         try {
-            this.tjener = new ServerSocket(port);
-            System.out.println("Tjenerlogg: ");
-            while (true) {
-                ventPåForbindelse();
-            }
-        } catch (Exception e) {
-            System.out.println("Noe gikk feil under oppstart: " + e.toString());
-        }
-
-    }
-
-    private void ventPåForbindelse() throws Exception {
-        Socket forbindelse = this.tjener.accept();
-        BufferedReader klientLeser = new BufferedReader
-                (new InputStreamReader(this.forbindelse.getInputStream())
-                );
-        PrintWriter klientSkriver = new PrintWriter(this.forbindelse.getOutputStream(), true);
-        this.kjører = true;
-        this.klientSkriver.println("Du har oppnådd forbindelse med: \n" + this.tjener.toString());
-        System.out.println("opnådde forbidelse med" + this.forbindelse.toString());
-        Thread tråd = new KlientTråd(forbindelse, klientLeser, klientSkriver);
-        System.out.println("MAIN: delte ut thread: " + tråd.getId() + "til klient: " + forbindelse.toString());
-        tråd.start();
-        //menu();
-    }
-/*
-    private void meny() throws Exception {
-
-        final int PLUSS = 1;
-        final int MINUS = 2;
-        final int AVSLUTT = 9;
-
-        while (this.kjører) {
-            System.out.println("viser hovedmeny");
+            final int PLUSS = 1;
+            final int MINUS = 2;
+            final int AVSLUTT = 9;
+            System.out.println("Thread" + this.getId() + "viser hovedmeny");
             this.klientSkriver.println(" ");
             this.klientSkriver.println("Pluss og Minus tjener Meny:");
             this.klientSkriver.println(" ");
@@ -56,7 +29,7 @@ public class Tjener {
             this.klientSkriver.println("2. Minus");
             this.klientSkriver.println("9. Koble fra");
             this.klientSkriver.println("Skriv inn korresponderende tall for å velge handling...");
-            int menyvalg = mottaInt();
+            int menyvalg = this.mottaInt();
             switch (menyvalg) {
                 case PLUSS:
                     pluss();
@@ -71,15 +44,16 @@ public class Tjener {
                     this.klientSkriver.println(menyvalg + ", er ikke et gyldig menyvalg.");
                     break;
             }
+        } catch (Exception e) {
+            System.out.println(this.getId() + ":" + e.toString());
         }
+
     }
 
     private void avslutt() throws Exception {
         try {
             this.klientSkriver.close();
             this.klientLeser.close();
-            this.tjener.close();
-            this.kjører = false;
         } catch (Exception e) {
             throw e;
         }
@@ -121,7 +95,5 @@ public class Tjener {
         }
         System.out.println("fikk: " + linje + " som input.");
         return Integer.parseInt(linje);
-    }*/
+    }
 }
-
-

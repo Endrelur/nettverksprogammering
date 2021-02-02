@@ -1,8 +1,6 @@
 package øvinger.en.tjener;
 
-import java.util.Scanner;
-
-public class Main {
+public class TjenerMain {
 
 
     public static void main(String[] args) {
