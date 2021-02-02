@@ -27,7 +27,7 @@ public class HttpRequest {
 
     private void parseRequestLine(BufferedReader reader) throws IOException {
         // RFC 72030 - 3.1.1
-        String[] requestLine = reader.readLine().split("\\s+");
+        String[] requestLine = reader.readLine().split(" ");
         methodToken     = requestLine[0];
         requestTarget   = requestLine[1];
         protocolVersion = requestLine[2];

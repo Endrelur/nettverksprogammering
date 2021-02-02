@@ -23,9 +23,23 @@ public abstract class HttpError extends RuntimeException {
 
         response.setStatusLine("HTTP/1.1 " + statusCode);
 
-        byte[] payload = String.format("<h1>%s</h1><br><p>%s</p>", statusCode, message).getBytes(StandardCharsets.UTF_8);
+        String htmlResource =
+                "<!DOCTYPE html>"                                               + "\n" +
+                    "<html lang=\"en\" dir=\"ltr\">"                            + "\n" +
+                        "<head>"                                                + "\n" +
+                            "<meta charset=\"utf-8\">"                          + "\n" +
+                            "<title>" + statusCode + "</title>"                 + "\n" +
+                        "</head>"                                               + "\n" +
+                        "<body>"                                                + "\n" +
+                            "<h1>" + statusCode + "</h1>"                       + "\n" +
+                            "<p>" + message + "</p>"                            + "\n" +
+                        "</body>"                                               + "\n" +
+                    "</html>"                                                  ;
+
+        byte[] payload = htmlResource.getBytes(StandardCharsets.UTF_8);
         response.addHeader("Content-Type", "text/html; charset=utf-8");
         response.addHeader("Content-Length", "" + payload.length);
+        response.setPayLoad(payload);
 
         return response;
     }

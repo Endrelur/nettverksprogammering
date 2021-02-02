@@ -1,13 +1,9 @@
 package øvinger.en.web.http;
 
-import øvinger.en.web.Utils;
 import øvinger.en.web.http.error.ClientError;
 import øvinger.en.web.http.error.ServerError;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
@@ -47,7 +43,7 @@ public class HttpHeaderServer {
                 LOGGER.log(Level.SEVERE, "Exception while accepting connection: " + e.toString());
             }
         }
-        Utils.closeQuietly(serverSocket);
+        closeQuietly(serverSocket);
     }
 
     private void handleConnection(Socket connection) {
@@ -66,20 +62,20 @@ public class HttpHeaderServer {
         }
         catch (ServerError | ClientError e) {
             HttpResponse response = e.getResponse();
-            sendErrorResponse(response, out);
+            sendErrorResponseAndSuppress(response, out);
         }
         catch (IOException e) {
             LOGGER.log(Level.SEVERE, "Exception while handling connection: " + e.toString());
         }
         finally {
-            Utils.closeQuietly(reader);
-            Utils.closeQuietly(out);
-            Utils.closeQuietly(connection);
+            closeQuietly(reader);
+            closeQuietly(out);
+            closeQuietly(connection);
         }
     }
 
     private HttpResponse handleRequest(HttpRequest request) {
-        if (!request.getMethodToken().equals("GET")) {
+        if (!request.getMethodToken().equals("GET")) {              //
             throw new ServerError("501 Not Implemented", null);
         }
 
@@ -88,12 +84,11 @@ public class HttpHeaderServer {
         }
 
         HttpResponse response = new HttpResponse();
-        response.setStatusLine("HTTP/1.1 200 OK");
-
         byte[] payload = generateResource(request);
-        response.setPayLoad(payload);
+        response.setStatusLine("HTTP/1.1 200 OK");
         response.addHeader("Content-Type", "text/html; charset=utf-8");
         response.addHeader("Content-Length", payload.length + "");
+        response.setPayLoad(payload);
 
         return response;
     }
@@ -101,6 +96,7 @@ public class HttpHeaderServer {
     private byte[] generateResource(HttpRequest request) {
         StringBuilder builder = new StringBuilder();
         LinkedHashMap<String, String> headers = request.getHeaderTable();
+
         builder.append("<ul>\n");
         headers.forEach((name, value) ->
                 builder.append("\t<li>").append(name).append(": ").append(value).append("</li>\n")
@@ -128,10 +124,18 @@ public class HttpHeaderServer {
         System.exit(-1);
     }
 
-    private void sendErrorResponse(HttpResponse response, OutputStream out) {
+    private void sendErrorResponseAndSuppress(HttpResponse response, OutputStream out) {
         try {
             response.send(out);
         } catch (IOException e) {
+            // Shh...
+        }
+    }
+
+    public void closeQuietly(Closeable closeable) {
+        try {
+            closeable.close();
+        } catch (Exception e) {
             // Shh...
         }
     }
