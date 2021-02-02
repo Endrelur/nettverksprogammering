@@ -6,9 +6,19 @@ import java.io.PrintWriter;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+/**
+ * En tjener klasse som benytter flere trådklienter for å kommunisere aritmetiske oppgaver med klienter.
+ * ADVARSEL må hard-stoppes.
+ */
 public class Tjener {
     private ServerSocket tjener;
 
+    /**
+     * Oppretter en tjener på den spesifiserte porten på denne datamaskinen.
+     *
+     * @param port porten for å opprette tjeneren på.
+     * @throws Exception
+     */
     public Tjener(int port) throws Exception {
         try {
             this.tjener = new ServerSocket(port);
@@ -22,6 +32,9 @@ public class Tjener {
 
     }
 
+    /**
+     * Venter på koblinger fra forskjellige klienter og oppretter en tråd de kan kjøre på.
+     */
     private void ventPåForbindelse() {
         try {
             Socket forbindelse = this.tjener.accept();

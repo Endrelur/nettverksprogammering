@@ -5,18 +5,31 @@ import java.io.PrintWriter;
 import java.net.Socket;
 import java.util.regex.Pattern;
 
+/**
+ * Denne klassen representerer en tråd som kan benyttes av en klient.
+ */
 public class KlientTråd extends Thread {
     private Socket socket;
     private BufferedReader klientLeser;
     private PrintWriter klientSkriver;
     private boolean running;
 
+    /**
+     * Oppretter en tråd som en klient kan benytte til simple aritmetiske oppgaver.
+     *
+     * @param socket        socketen klienten er koblet til.
+     * @param klientLeser   datastreamen klienten skriver til.
+     * @param klientSkriver datastreamen klienten leser fra.
+     */
     public KlientTråd(Socket socket, BufferedReader klientLeser, PrintWriter klientSkriver) {
         this.socket = socket;
         this.klientLeser = klientLeser;
         this.klientSkriver = klientSkriver;
     }
 
+    /**
+     * Starter tråden og det aritmetiske programmet klienten benytter.
+     */
     public void run() {
         this.running = true;
         while (this.running) {
@@ -54,6 +67,11 @@ public class KlientTråd extends Thread {
         }
     }
 
+    /**
+     * Kobler fra socket og stenger datastreamer.
+     *
+     * @throws Exception
+     */
     private void avslutt() throws Exception {
         this.running = false;
         this.klientSkriver.close();
@@ -62,6 +80,11 @@ public class KlientTråd extends Thread {
         System.out.println("THREAD:" + this.getId() + "Avsluttet.");
     }
 
+    /**
+     * Utfører en enkel a-b oppgave for en klient.
+     *
+     * @throws Exception
+     */
     private void minus() throws Exception {
         System.out.println("THREAD:" + this.getId() + ": Klienten har valgt minus");
         this.klientSkriver.println(" ");
@@ -74,6 +97,11 @@ public class KlientTråd extends Thread {
         this.klientSkriver.println(tall1 - tall2);
     }
 
+    /**
+     * Utfører en enkel a+b oppgave for en klient.
+     *
+     * @throws Exception
+     */
     private void pluss() throws Exception {
         System.out.println("THREAD:" + this.getId() + ": Klienten har valgt pluss");
         this.klientSkriver.println(" ");
@@ -87,6 +115,12 @@ public class KlientTråd extends Thread {
 
     }
 
+    /**
+     * Holder på klienten til et heltall blir motatt av tjeneren.
+     *
+     * @return tallet klienten sendte.
+     * @throws Exception
+     */
     private int mottaInt() throws Exception {
         System.out.println("THREAD:" + this.getId() + "THREAD:" + this.getId() + ": Avventer int-input");
         this.klientSkriver.println("");
