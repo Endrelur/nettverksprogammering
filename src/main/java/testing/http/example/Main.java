@@ -45,9 +45,11 @@ public class Main {
         BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
         BufferedOutputStream outputStream = new BufferedOutputStream(connection.getOutputStream());
 
+        // Process request
         String[] requestLine = parseRequest(reader);
         byte[] response = processRequest(requestLine);
 
+        // Send response
         outputStream.write(response);
         outputStream.flush();
 
@@ -182,13 +184,4 @@ public class Main {
                 "Connection: close\r\n" +
                 "\r\n").getBytes(StandardCharsets.UTF_8);
     }
-
-    // Just to have something to send if a client sends an unsupported request-method
-    private static byte[] serverError() {
-        return ("HTTP/1.1 500 Internal Server Error\r\n" +
-                "Content-Length: 0\r\n" +
-                "Connection: close\r\n" +
-                "\r\n").getBytes(StandardCharsets.UTF_8);
-    }
-
 }
