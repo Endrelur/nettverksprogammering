@@ -1,0 +1,29 @@
+html {
+    font-family: FreeMono, sans-serif;
+    font-weight: bold;
+    color: black;
+    background-color: pink;
+}
+
+body {
+    margin: 0;
+    height: 100vh;
+    box-sizing: border-box;
+}
+h1 {
+    text-align: center;
+    font-family: Arial;
+}
+
+img {
+    width: 100%;
+}
+
+main {
+    max-width: 40em;
+    height: 100%;
+    padding: 2em;
+    margin: 0 auto;
+    box-sizing: border-box;
+    background-color: aqua;
+}
