@@ -3,9 +3,11 @@ package øvinger.en.klient;
 import java.util.Scanner;
 
 public class KlientMain {
+
     public static void main(String[] args) {
+        final String TJENERNAVN = "MSI";
         try {
-            SocketKlient klient = new SocketKlient(1250, "MSI");
+            SocketKlient klient = new SocketKlient(1250, TJENERNAVN);
             boolean kjører = true;
             Scanner sc = new Scanner(System.in);
             while (kjører) {
